@@ -23,7 +23,7 @@ void MetropolisXOR::Run()
 	auto StopwatchStart = std::chrono::high_resolution_clock::now();
 	srand(time(NULL));
 
-	int NMax = 1000000;
+	const int NMax = 1000000;
 	for (size_t i = 0; i < NMax; i++) {
 		// inverse temperature increases over time, simulating the system cooling
 		Beta = Beta + 1000.0 / NMax;
