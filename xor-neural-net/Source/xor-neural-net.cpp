@@ -18,8 +18,8 @@ int main()
 		std::cout << "init weight " << i << " = " << InitialWeights[i] << std::endl;
 	}
 
-	MetropolisXOR MXor = MetropolisXOR(TruthTable, InitialWeights);
-	MXor.Run();
-	MXor.LogResults();
-
+	MetropolisXOR* MXor =  new MetropolisXOR(TruthTable, InitialWeights);
+	MXor->Run();
+	MXor->LogResults();
+	delete MXor;
 }
