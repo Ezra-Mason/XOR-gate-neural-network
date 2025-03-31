@@ -15,19 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Source\xor-neural-net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MetropolisXOR.cpp">
+    <ClCompile Include="Source\MetropolisXOR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
-    <None Include=".gitignore" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="MetropolisXOR.h">
+    <ClInclude Include="Source\MetropolisXOR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

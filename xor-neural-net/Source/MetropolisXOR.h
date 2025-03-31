@@ -12,7 +12,7 @@ public:
 	~MetropolisXOR();
 	void Run();
 	void LogResults();
-private: 
+private:
 	/// <summary>
 	/// Determine the error between the given weights and the truth table
 	/// </summary>

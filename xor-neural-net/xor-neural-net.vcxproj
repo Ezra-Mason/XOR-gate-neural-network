@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7159eb4d-a0d4-40ce-8e5d-8db9792397c1}</ProjectGuid>
+    <ProjectGuid>{4e8f4034-e1be-4cd4-8a62-fb1cb8edad42}</ProjectGuid>
     <RootNamespace>xorneuralnet</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -127,15 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MetropolisXOR.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Source\MetropolisXOR.cpp" />
+    <ClCompile Include="Source\xor-neural-net.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".gitignore" />
-    <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="MetropolisXOR.h" />
+    <ClInclude Include="Source\MetropolisXOR.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
