@@ -26,29 +26,29 @@ void MetropolisXOR::Run()
 	const int NMax = 1000000;
 	for (size_t i = 0; i < NMax; i++) {
 		// inverse temperature increases over time, simulating the system cooling
-		Beta = Beta + 1000.0 / NMax;
+		Beta = Beta + 1000.f / NMax;
 
 		// copy the current weights to the new weights array
 		std::copy(std::begin(CurrentWeights), std::end(CurrentWeights), std::begin(NewWeights));
 
 		// pick a random weight in the array and set it to a new value between -10 and 10
-		const int RandIndex = (double(rand()) / (double(RAND_MAX))) * 16;
-		NewWeights[RandIndex] = (double(rand()) / (double(RAND_MAX)) - 0.5) * 20;
+		const int RandIndex = (float(rand()) / (float(RAND_MAX))) * 16;
+		NewWeights[RandIndex] = (float(rand()) / (float(RAND_MAX)) - 0.5) * 20;
 
 		// get the global errors for each of the weight configurations
-		const double CurrentError = GetGobalError(CurrentWeights);
-		const double NewError = GetGobalError(NewWeights);
+		const float CurrentError = GetGobalError(CurrentWeights);
+		const float NewError = GetGobalError(NewWeights);
 
 		//keep the configuration if it reduces error
-		if (NewError - CurrentError < 0.0)
+		if (NewError - CurrentError < 0.f)
 		{
 			std::copy(std::begin(NewWeights), std::end(NewWeights), std::begin(CurrentWeights));
 		}
 		else
 		{
 			// take the new config even if it doesnt reduce error if the probability of a random jump is high enough
-			const double JumpProbability = exp((CurrentError - NewError) * Beta);
-			const double Rand = double(rand()) / (double(RAND_MAX));
+			const float JumpProbability = exp((CurrentError - NewError) * Beta);
+			const float Rand = float(rand()) / (float(RAND_MAX));
 			if (Rand < JumpProbability)
 			{
 				std::copy(std::begin(NewWeights), std::end(NewWeights), std::begin(CurrentWeights));

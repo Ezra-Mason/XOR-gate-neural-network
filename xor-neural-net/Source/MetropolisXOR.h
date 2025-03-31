@@ -3,7 +3,6 @@ class MetropolisXOR
 {
 private:
 	const int* TruthTable;
-	int size;
 	float CurrentWeights[16] = { 0 };
 	float NewWeights[16] = { 0 };
 	float Beta = 0.1f;
