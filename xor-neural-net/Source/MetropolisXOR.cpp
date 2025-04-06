@@ -1,20 +1,27 @@
 #include "MetropolisXOR.h"
 #include <iostream>
 #include <iterator>
+#include <numeric>
 #include <chrono>
 #include <math.h>
 
-MetropolisXOR::MetropolisXOR(const int* TruthArr, float* InitWeights) :
-	TruthTable(TruthArr)
+MetropolisXOR::MetropolisXOR(
+	const int InputCount,
+	const std::vector<std::vector<int>>& InputArr,
+	const int* TruthArr,
+	const int HiddenCount,
+	float* InitWeights)
+	:
+	Inputs(InputArr),
+	InputNodeCount(InputCount),
+	TruthTable(TruthArr),
+	HiddenNodeCount(HiddenCount)
 {
+
 	for (size_t i = 0; i < 16; i++)
 	{
 		*(CurrentWeights + i) = InitWeights[i];
 	}
-}
-
-MetropolisXOR::~MetropolisXOR()
-{
 }
 
 void MetropolisXOR::Run()
@@ -64,25 +71,39 @@ void MetropolisXOR::LogResults()
 {
 	for (size_t i = 0; i < 8; i++)
 	{
-		const float H4 = SigmoidThreshold(CurrentWeights[0] + CurrentWeights[4] * TruthTable[i * 4] + CurrentWeights[5] * TruthTable[i * 4 + 1] + CurrentWeights[6] * TruthTable[i * 4 + 2]);
-		const float H5 = SigmoidThreshold(CurrentWeights[1] + CurrentWeights[7] * TruthTable[i * 4] + CurrentWeights[8] * TruthTable[i * 4 + 1] + CurrentWeights[9] * TruthTable[i * 4 + 2]);
-		const float H6 = SigmoidThreshold(CurrentWeights[2] + CurrentWeights[10] * TruthTable[i * 4] + CurrentWeights[11] * TruthTable[i * 4 + 1] + CurrentWeights[12] * TruthTable[i * 4 + 2]);
-		const float O7 = SigmoidThreshold(CurrentWeights[3] + CurrentWeights[13] * H4 + CurrentWeights[14] * H5 + CurrentWeights[15] * H6);
-		std::cout << "xor(" << TruthTable[i * 4] << TruthTable[i * 4 + 1] << TruthTable[i * 4 + 2] << ") - expected: " << TruthTable[i * 4 + 3] << ", neural net: " << round(O7) << std::endl;
-	}
+		std::vector<float> H;
+		for (size_t j = 0; j < HiddenNodeCount; j++)
+		{
+			const int StartIndex = HiddenNodeCount * (j + 1) + 1;
+			const int EndIndex = StartIndex + HiddenNodeCount;
+			H.emplace_back(SigmoidThreshold(CurrentWeights[j] + std::inner_product(CurrentWeights + StartIndex, CurrentWeights + EndIndex, Inputs[i].begin(), 0.f)));
+		}
+		const int OutputBeginIndex = HiddenNodeCount * (HiddenNodeCount + 1) + 1;
+		const int OutputEndIndex = OutputBeginIndex + HiddenNodeCount;
+		const float Output = SigmoidThreshold(CurrentWeights[HiddenNodeCount] + std::inner_product(CurrentWeights + OutputBeginIndex, CurrentWeights + OutputEndIndex, H.begin(), 0.f));
 
+		printf("Input: (%d, %d, %d),  expected: %d, neural net: %f \n", Inputs[i][0], Inputs[i][1], Inputs[i][2], TruthTable[i * 4 + 3], Output);
+	}
 }
 
 float MetropolisXOR::GetGobalError(float* Weights)
 {
 	float GlobalError = 0.f;
+	std::vector<float> HiddenOutputs;
 	for (size_t i = 0; i < 8; i++)
 	{
-		const float H4 = SigmoidThreshold(Weights[0] + Weights[4] * TruthTable[i * 4] + Weights[5] * TruthTable[i * 4 + 1] + Weights[6] * TruthTable[i * 4 + 2]);
-		const float H5 = SigmoidThreshold(Weights[1] + Weights[7] * TruthTable[i * 4] + Weights[8] * TruthTable[i * 4 + 1] + Weights[9] * TruthTable[i * 4 + 2]);
-		const float H6 = SigmoidThreshold(Weights[2] + Weights[10] * TruthTable[i * 4] + Weights[11] * TruthTable[i * 4 + 1] + Weights[12] * TruthTable[i * 4 + 2]);
-		const float O7 = SigmoidThreshold(Weights[3] + Weights[13] * H4 + Weights[14] * H5 + Weights[15] * H6);
-		GlobalError += (TruthTable[i * 4 + 3] - O7) * (TruthTable[i * 4 + 3] - O7);
+		HiddenOutputs.clear();
+		for (size_t j = 0; j < HiddenNodeCount; j++)
+		{
+			const int StartIndex = HiddenNodeCount * (j + 1) + 1;
+			const int EndIndex = StartIndex + HiddenNodeCount;
+			HiddenOutputs.emplace_back(SigmoidThreshold(Weights[j] + std::inner_product(Weights + StartIndex, Weights + EndIndex, Inputs[i].begin(), 0.f)));
+		}
+		const int OutputBeginIndex = HiddenNodeCount * (HiddenNodeCount + 1) + 1;
+		const int OutputEndIndex = OutputBeginIndex + HiddenNodeCount;
+		const float Output = SigmoidThreshold(Weights[HiddenNodeCount] + std::inner_product(Weights + OutputBeginIndex, Weights + OutputEndIndex, HiddenOutputs.begin(), 0.f));
+
+		GlobalError += (TruthTable[i * 4 + 3] - Output) * (TruthTable[i * 4 + 3] - Output);
 	}
 
 	return GlobalError;

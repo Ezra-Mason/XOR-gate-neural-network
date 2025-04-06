@@ -8,7 +8,10 @@
 
 int main()
 {
+	const std::vector<std::vector<int>> Inputs{ { 0,0,0 }, {0, 0, 1}, {0, 1, 0}, {0, 1, 1}, {1, 0, 0}, {1, 0, 1}, {1, 1, 0}, {1, 1, 1} };
 	const int TruthTable[32] = { 0,0,0,0, 0,0,1,1, 0,1,0,1, 0,1,1,0, 1,0,0,1, 1,0,1,0, 1,1,0,0, 1,1,1,1 };
+	const int HiddenNodeCount = 3;
+	const int InputNodeCount = 3;
 
 	// generate the random starting weights between -0.5 and +0.5
 	srand(time(0));
@@ -18,7 +21,7 @@ int main()
 		std::cout << "init weight " << i << " = " << InitialWeights[i] << std::endl;
 	}
 
-	MetropolisXOR* MXor =  new MetropolisXOR(TruthTable, InitialWeights);
+	MetropolisXOR* MXor = new MetropolisXOR(InputNodeCount, Inputs, TruthTable, HiddenNodeCount, InitialWeights);
 	MXor->Run();
 	MXor->LogResults();
 	delete MXor;
